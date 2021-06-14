@@ -10,7 +10,6 @@ import (
 	"github.com/amartha-shorty/internal/app/shorty/http"
 )
 
-// Start to initialize sirclo-berat application
 func Start(opt Options) error {
 	shortyRepository := _shortyRepository.NewShortyRepository()
 	shortyController := _shortyController.NewShortyController(time.Second*2, shortyRepository)
