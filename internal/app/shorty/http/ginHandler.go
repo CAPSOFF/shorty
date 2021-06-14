@@ -43,10 +43,16 @@ func (gh *ginHandler) HandleShorten(c *gin.Context) {
 		return
 	}
 
-	gh.shortenController.Shorten(c)
-	// controller here
+	shortCode, errCode, err := gh.shortenController.Shorten(c, request.URL, request.ShortCode)
+	if err != nil {
+		c.AbortWithStatusJSON(errCode, gin.H{
+			"ok":      false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"shortCode": "test-short123",
+		"shortCode": shortCode,
 	})
 }
