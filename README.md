@@ -11,12 +11,12 @@
 
 ## Overview
 
-this repository is made to answer AMARTHA pre-test question for Senior Backend Software Engineer ([Shorty](https://gist.github.com/williamn/cfad86ab218101e0c5d7be89226c5c85)), using Golang, Dockerfile
+this repository is made to answer AMARTHA pre-test question for Senior Backend Software Engineer ([Shorty](https://gist.github.com/williamn/cfad86ab218101e0c5d7be89226c5c85)), using Golang, Docker
 
 ## Requirement
 
 - Go
-- Dockerfile
+- Docker
 - GinGonic
 
 ## Docker
