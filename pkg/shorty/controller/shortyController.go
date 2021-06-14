@@ -15,19 +15,19 @@ import (
 
 var inMemoryMap map[string]model.ShortySpec
 
-type shortenController struct {
-	timeout           time.Duration
-	shortenRepository shorty.Repository
+type shortyController struct {
+	timeout          time.Duration
+	shortyRepository shorty.Repository
 }
 
-func NewShortyController(timeout time.Duration, shortenRepository shorty.Repository) shorty.Controller {
-	return &shortenController{
-		timeout:           timeout,
-		shortenRepository: shortenRepository,
+func NewShortyController(timeout time.Duration, shortyRepository shorty.Repository) shorty.Controller {
+	return &shortyController{
+		timeout:          timeout,
+		shortyRepository: shortyRepository,
 	}
 }
 
-func (uc *shortenController) Shorten(ctx context.Context, url string, desiredShortCode string) (shortCode string, httpStatusCode int, err error) {
+func (uc *shortyController) Shorten(ctx context.Context, url string, desiredShortCode string) (shortCode string, httpStatusCode int, err error) {
 	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
 	defer cancel()
 
@@ -66,7 +66,7 @@ func (uc *shortenController) Shorten(ctx context.Context, url string, desiredSho
 	return shortCode, http.StatusCreated, nil
 }
 
-func (uc *shortenController) ShortCode(ctx context.Context, shortCode string) (url string, httpStatusCode int, err error) {
+func (uc *shortyController) ShortCode(ctx context.Context, shortCode string) (url string, httpStatusCode int, err error) {
 	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
 	defer cancel()
 
@@ -74,22 +74,22 @@ func (uc *shortenController) ShortCode(ctx context.Context, shortCode string) (u
 		return "", http.StatusNotFound, fmt.Errorf("shortcode cannot be found in the system (%v)", shortCode)
 	}
 
-	return inMemoryMap[shortCode].URL, http.StatusFound, nil
-}
-
-func (uc *shortenController) ShortCodeStats(ctx context.Context, shortCode string) (shortyData model.ShortySpec, httpStatusCode int, err error) {
-	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
-	defer cancel()
-
-	if _, ok := inMemoryMap[shortCode]; !ok {
-		return model.ShortySpec{}, http.StatusNotFound, fmt.Errorf("shortcode cannot be found in the system (%v)", shortCode)
-	}
-
 	inMemoryMap[shortCode] = model.ShortySpec{
 		URL:           inMemoryMap[shortCode].URL,
 		StartDate:     inMemoryMap[shortCode].StartDate,
 		LastSeenDate:  time.Now().String(),
 		RedirectCount: inMemoryMap[shortCode].RedirectCount + 1,
+	}
+
+	return inMemoryMap[shortCode].URL, http.StatusFound, nil
+}
+
+func (uc *shortyController) ShortCodeStats(ctx context.Context, shortCode string) (shortyData model.ShortySpec, httpStatusCode int, err error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	if _, ok := inMemoryMap[shortCode]; !ok {
+		return model.ShortySpec{}, http.StatusNotFound, fmt.Errorf("shortcode cannot be found in the system (%v)", shortCode)
 	}
 
 	return inMemoryMap[shortCode], http.StatusOK, nil
